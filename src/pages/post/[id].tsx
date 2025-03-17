@@ -1,37 +1,19 @@
 import { useParams } from "react-router-dom";
 import { useEntity, EntityProvider, getUserName } from "@replyke/react-js";
+import { UserAvatar } from "@replyke/ui-core-react-js";
+
+import { LoaderCircleIcon } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { UserAvatar } from "@replyke/ui-core-react-js";
-import { getTimeAgo } from "../../lib/timeAgo";
 import PostRowVotes from "@/components/home-page/PostRow/PostRowVotes";
-import { ThreadedStyleCallbacks } from "../../components/CommentSection/Callbacks";
-import { toast } from "sonner";
-import { useThreadedComments } from "../../components/CommentSection";
-import { ScrollArea } from "@radix-ui/react-scroll-area";
-import { LoaderCircleIcon } from "lucide-react";
+import { getTimeAgo } from "../../lib/timeAgo";
+import CommentSection from "../../components/post-page/CommentSection";
 
 function PostPage() {
   const { entity } = useEntity();
 
-  const callbacks: ThreadedStyleCallbacks = {
-    loginRequiredCallback: () => {
-      toast("Please log in first");
-    },
-    commentTooShortCallback: () => {
-      toast("Your comment is too short");
-    },
-  };
-
-  const { CommentSectionProvider, CommentsFeed, NewCommentForm } =
-    useThreadedComments({
-      entityId: entity?.id,
-      callbacks,
-      limit: 10,
-    });
-
   if (typeof entity === "undefined")
-    return <LoaderCircleIcon className="size-5 animate-spin" />;
+    return <LoaderCircleIcon className="size-6 animate-spin mx-auto my-4" />;
 
   if (entity === null)
     return <div className="text-center py-8">Post not found</div>;
@@ -69,18 +51,7 @@ function PostPage() {
           </CardContent>
         </div>
       </div>
-
-      <CommentSectionProvider>
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <ScrollArea className="flex-1 bg-white">
-            <CommentsFeed />
-            <div className="w-full h-4" />
-          </ScrollArea>
-          <div className="border-t">
-            <NewCommentForm />
-          </div>
-        </div>
-      </CommentSectionProvider>
+      <CommentSection />
     </Card>
   );
 }
